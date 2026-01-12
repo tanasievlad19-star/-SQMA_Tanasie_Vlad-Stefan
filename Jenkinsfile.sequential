@@ -1,0 +1,55 @@
+pipeline {
+  agent any
+
+  options { skipDefaultCheckout(true) }
+
+  parameters {
+    choice(
+      name: 'FLOW',
+      choices: ['SEQUENTIAL', 'ONLY_TEST1', 'ONLY_TEST2'],
+      description: 'Run tests sequentially or run a single test'
+    )
+  }
+
+  stages {
+    stage('Checkout') {
+      steps { checkout scm }
+    }
+
+    stage('Verify Tooling') {
+      steps {
+        sh '''
+          set -eux
+          mvn -v
+          java -version
+        '''
+      }
+    }
+
+    stage('TestCase1') {
+      when { expression { params.FLOW == 'SEQUENTIAL' || params.FLOW == 'ONLY_TEST1' } }
+      steps {
+        sh '''
+          set -eux
+          mvn -q -Dtest=TestCase1Test test
+        '''
+      }
+    }
+
+    stage('TestCase2') {
+      when { expression { params.FLOW == 'SEQUENTIAL' || params.FLOW == 'ONLY_TEST2' } }
+      steps {
+        sh '''
+          set -eux
+          mvn -q -Dtest=TestCase2Test test
+        '''
+      }
+    }
+  }
+
+  post {
+    always {
+      junit testResults: 'target/surefire-reports/*.xml', allowEmptyResults: true
+    }
+  }
+}
