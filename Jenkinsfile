@@ -4,7 +4,7 @@ pipeline {
   parameters {
     choice(
       name: 'TEST_TO_RUN',
-      choices: ['TestCase1', 'TestCase2', 'ALL'],
+      choices: ['TestCase1Test', 'TestCase2Test', 'ALL'],
       description: 'Choose which JUnit test class to run'
     )
   }
