@@ -30,13 +30,24 @@
     </dependencies>
 
     <build>
+        <!-- Treat src/main/java as test sources (non-standard, but works) -->
+        <testSourceDirectory>${project.basedir}/src/main/java</testSourceDirectory>
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.2.5</version>
+                <configuration>
+                    <!-- Make sure your TestCase*Test classes are included -->
+                    <includes>
+                        <include>**/*Test.java</include>
+                        <include>**/*TestCase*.java</include>
+                    </includes>
+                </configuration>
             </plugin>
         </plugins>
     </build>
+
 
 </project>
